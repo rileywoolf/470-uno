@@ -15,6 +15,8 @@ public abstract class Player {
         this.hand = new ArrayList<>();
     }
 
+    public String getName() { return name; }
+
     public boolean hasNoCards() { return hand.isEmpty(); }
 
     public void addCard(Card card) {

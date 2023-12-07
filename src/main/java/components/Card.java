@@ -48,7 +48,7 @@ public class Card {
         if (type == CardType.NUMBER) {
             return color + " " + number;
         } else if (type == CardType.WILD || type == CardType.WILD_DRAW_FOUR) {
-            return type.toString();
+            return type + (color == null? "" : " " + color);
         } else {
             return color + " " + type;
         }

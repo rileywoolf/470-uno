@@ -27,6 +27,7 @@ public class Game {
         }
     }
 
+    // TODO: currently there is no way to call Uno or call out others for missing Uno...
     public void play() {
         Card topCard = deck.draw();
         Player currentPlayer = players.get(currentIndex);
@@ -45,10 +46,16 @@ public class Game {
         while (true) {
             currentPlayer = players.get(currentIndex);
 
-            // Player has to draw a card
-            currentPlayer.addCard(deck.draw());
+            Card cardToPlay = currentPlayer.play(topCard);
 
-            topCard = currentPlayer.play(topCard);
+            // If the player cannot make a move, have them draw a card.
+            if (cardToPlay == null) {
+                currentPlayer.addCard(deck.draw());
+                currentIndex = nextPlayer(currentIndex);
+                continue;
+            } else {
+                topCard = cardToPlay;
+            }
 
             // Logic for special cards (reverse, draw two, skip), and wilds.
             switch(topCard.getType()) {
@@ -67,6 +74,7 @@ public class Game {
             // Switch to next player's turn.
             currentIndex = nextPlayer(currentIndex);
         }
+        System.out.println("WINNER WINNER CHICKEN DINNER: " + currentPlayer.getName());
     }
 
     // Handles when the first card is a wild draw four.
@@ -80,17 +88,20 @@ public class Game {
     // Calculates the index of the next user based on current user and what direction of play.
     private int nextPlayer(int curr) {
         if (forwardPlay) {
-            return curr++ == players.size() ? 0 : curr;
+            curr++;
+            return curr == players.size() ? 0 : curr;
         } else {
-            return curr-- == -1 ? players.size() - 1 : curr;
+            curr--;
+            return curr == -1 ? players.size() - 1 : curr;
         }
     }
 
-    // Gives the specified user the specified number of cards from the deck.
+    // Gives the specified user the specified number of cards from the deck and skips their turn.
     private void drawCards(int numCards) {
         for (int i = 0; i < numCards; i++) {
             players.get(nextPlayer(currentIndex)).addCard(deck.draw());
         }
+        currentIndex = nextPlayer(currentIndex);
     }
 
     // Handles a wild draw four by giving four to the next player and letting the current player choose the color.
