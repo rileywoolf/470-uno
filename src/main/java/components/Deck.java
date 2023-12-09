@@ -7,16 +7,40 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * The {@code Deck} class represents a deck of cards used in a card game.
+ * It contains methods to initialize, shuffle, draw, and return cards to the deck.
+ * <p>
+ * The deck is initially created with standard cards, including number cards, special cards
+ * (e.g., Skip, Reverse, Draw Two), and wild cards (Wild and Wild Draw Four).
+ * </p>
+ * <p>
+ * The class uses the {@link Card} class to represent individual cards.
+ * </p>
+ *
+ * @author Riley Woolf
+ * @version 1.0
+ */
 public class Deck {
+    /**
+     * The list of cards in the deck.
+     */
     private final List<Card> cards;
 
+    /**
+     * Constructs a new Deck and initializes it by creating and shuffling the cards.
+     */
     public Deck() {
         cards = new ArrayList<>();
         initialize();
         shuffle();
     }
 
-    // Create the deck.
+    /**
+     * Initializes the deck by adding standard cards, including number cards,
+     * special cards (Skip, Reverse, Draw Two), and wild cards (Wild and Wild Draw Four).
+     * The deck is created with four sets of each wild card.
+     */
     private void initialize() {
         for (Color color : Color.values()) {
             // Add all the number cards.
@@ -41,12 +65,19 @@ public class Deck {
         }
     }
 
-    // Shuffle the cards in the deck.
+    /**
+     * Shuffles the cards in the deck.
+     */
     public void shuffle() {
         Collections.shuffle(cards);
     }
 
-    // Draw a card from the deck.
+    /**
+     * Draws a card from the deck. If the deck is empty, it initializes the deck again
+     * before drawing a card.
+     *
+     * @return the card drawn from the deck
+     */
     public Card draw() {
         if (cards.isEmpty()) {
             // Initialize the deck again.
@@ -55,7 +86,11 @@ public class Deck {
         return cards.remove(0);
     }
 
-    // Puts the given card back in the deck.
+    /**
+     * Returns the given card to the deck and shuffles the deck.
+     *
+     * @param card the card to be returned to the deck
+     */
     public void returnCard(Card card) {
         cards.add(card);
         shuffle();

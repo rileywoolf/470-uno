@@ -5,16 +5,39 @@ import utils.Color;
 
 import java.util.Random;
 
-// This is a player that just loops through the cards in its hand and plays the first on that is valid.
+/**
+ * The {@code DumbComputerPlayer} class represents a simple computer player in a card game.
+ * This player selects the first valid card in its hand and plays it. Additionally, when required
+ * to choose a color (e.g., after playing a Wild card), it randomly selects one of the available colors.
+ *
+ * @author Riley Woolf
+ * @version 1.0
+ */
 public class DumbComputerPlayer extends Player {
 
+    /**
+     * Constructs a new DumbComputerPlayer with the default name "Simple Computer Player."
+     */
     public DumbComputerPlayer() {
         super("Simple Computer Player");
     }
 
+    /**
+     * Constructs a new DumbComputerPlayer with the specified name.
+     *
+     * @param name the name of the DumbComputerPlayer
+     */
     public DumbComputerPlayer(String name) {
         super(name);
     }
+
+    /**
+     * Overrides the play method from the {@link Player} class. This DumbComputerPlayer
+     * loops through its hand and plays the first valid card it encounters.
+     *
+     * @param topCard the current top card on the table
+     * @return the card played by the DumbComputerPlayer, or {@code null} if no valid move is possible
+     */
     @Override
     public Card play(Card topCard) {
         boolean validMove;
@@ -31,7 +54,12 @@ public class DumbComputerPlayer extends Player {
         return hand.remove(index);
     }
 
-    // Choose the color randomly.
+    /**
+     * Overrides the chooseColor method from the {@link Player} class. This DumbComputerPlayer
+     * randomly chooses a color when required (e.g., after playing a Wild card).
+     *
+     * @return the randomly chosen color
+     */
     @Override
     public Color chooseColor() {
         Random random = new Random();
