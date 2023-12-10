@@ -19,12 +19,21 @@ import java.util.Random;
 public abstract class AIPlayer extends Player {
 
     /**
+     * A boolean flag indicating whether to print the options and choices available to
+     * and made by the AI player.
+     */
+    protected boolean print;
+
+
+    /**
      * Constructs a new AI player with the specified name.
      *
      * @param name the name of the AI player
+     * @param print whether to print the AI options and choices
      */
-    public AIPlayer(String name) {
+    public AIPlayer(String name, boolean print) {
         super(name);
+        this.print = print;
     }
 
     /**
@@ -37,8 +46,10 @@ public abstract class AIPlayer extends Player {
      */
     @Override
     public Card play(Card topCard) {
-        PrintUtils.displayTopCard(topCard);
-        PrintUtils.displayHand(name, hand);
+        if (print) {
+            PrintUtils.displayTopCard(topCard);
+            PrintUtils.displayHand(name, hand);
+        }
 
         List<Card> playableCards = new ArrayList<>();
 

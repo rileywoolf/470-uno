@@ -18,19 +18,23 @@ public class MediumAIPlayer extends AIPlayer {
 
     /**
      * Constructs a new medium-level AI player with the default name "Medium AI".
+     *
+     * @param print a boolean indicating whether to print game-related information
      */
-    public MediumAIPlayer() {
-        super("Medium AI");
+    public MediumAIPlayer(boolean print) {
+        super("Medium AI", print);
     }
 
     /**
      * Constructs a new medium-level AI player with the specified name.
      *
-     * @param name the name of the AI player
+     * @param name  the name of the AI player
+     * @param print a boolean indicating whether to print game-related information
      */
-    public MediumAIPlayer(String name) {
-        super(name);
+    public MediumAIPlayer(String name, boolean print) {
+        super(name, print);
     }
+
 
     /**
      * {@inheritDoc}
@@ -87,7 +91,7 @@ public class MediumAIPlayer extends AIPlayer {
     @Override
     public Color chooseColor() {
         Color color = getMostCommonColor();
-        System.out.println("Chose color: " + color.name());
+        if (print) { System.out.println("Chose color: " + color.name()); }
         return color;
     }
 }

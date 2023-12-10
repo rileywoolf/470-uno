@@ -24,7 +24,11 @@ import java.util.Random;
  * @version 1.0
  */
 public class DumbComputerPlayer extends Player {
+    /**
+     * The {@code Random} object used for generating random values.
+     */
     private final Random rand = new Random();
+
 
     /**
      * Constructs a new DumbComputerPlayer with the default name "Simple Computer."
