@@ -7,7 +7,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         List<Player> players = new ArrayList<>();
-        players.add(new DumbComputerPlayer("Player One"));
+        players.add(new MediumAIPlayer("Player One"));
         players.add(new HumanPlayer("Player Two"));
         Game game = new Game(players);
 

@@ -2,19 +2,22 @@ package components.players;
 
 import components.Card;
 import utils.Color;
-import utils.ConsoleColors;
+import utils.PrintUtils;
 
 import java.util.Scanner;
 
 /**
- * The {@code HumanPlayer} class represents a player controlled by a human in a card game.
- * It extends the {@link Player} class, providing methods for a human player to play cards
- * and choose colors during the game.
+ * The {@code HumanPlayer} class represents a human player in a card game.
+ * It extends the {@link Player} class, providing functionality for the human player
+ * to play cards and choose colors during the game.
+ *
  * <p>
- * The class uses the {@link Scanner} class to read input from the console for card and color selections.
+ * The player can play a card by selecting the card index from their hand,
+ * draw a card by entering -1, or declare Uno by entering -2.
  * </p>
+ *
  * <p>
- * Note: The class also utilizes color formatting for displaying cards in the console.
+ * The class uses a {@link Scanner} object to read input from the console.
  * </p>
  *
  * @author Riley Woolf
@@ -54,11 +57,8 @@ public class HumanPlayer extends Player {
      */
     @Override
     public Card play(Card topCard) {
-        displayColor(topCard);
-        System.out.println("Top card:  " + topCard);
-        resetColor();
-
-        displayHand();
+        PrintUtils.displayTopCard(topCard);
+        PrintUtils.displayHand(name, hand);
 
         boolean validMove = false;
         declaredUno = false;
@@ -114,46 +114,5 @@ public class HumanPlayer extends Player {
                     System.out.println("Invalid color, please enter r, y, g, or b to make selection.");
             }
         } while (true);
-    }
-
-    /**
-     * Displays the current hand of the HumanPlayer in the console.
-     */
-    private void displayHand() {
-        System.out.println(name + "'s hand:");
-
-        for (int i = 0; i < hand.size(); i++) {
-            displayColor(hand.get(i));
-
-            System.out.print(i + ": " + hand.get(i) + "  ");
-        }
-        resetColor();
-        System.out.println();
-    }
-
-    /**
-     * Displays the color of a card in the console using color formatting.
-     *
-     * @param card the card whose color is to be displayed
-     */
-    private void displayColor(Card card) {
-        if (card.getColor() == null) {
-            System.out.print(ConsoleColors.RESET);
-            return;
-        }
-        switch (card.getColor()) {
-            case RED -> System.out.print(ConsoleColors.RED_BOLD);
-            case BLUE -> System.out.print(ConsoleColors.BLUE_BOLD);
-            case YELLOW -> System.out.print(ConsoleColors.YELLOW_BOLD);
-            case GREEN -> System.out.print(ConsoleColors.GREEN_BOLD);
-            default -> System.out.print(ConsoleColors.RESET);
-        }
-    }
-
-    /**
-     * Resets the console color to the default.
-     */
-    private void resetColor() {
-        System.out.print(ConsoleColors.RESET);
     }
 }

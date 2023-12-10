@@ -1,9 +1,12 @@
 package components.players;
 
 import components.Card;
+import utils.Color;
+import utils.PrintUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * The {@code AIPlayer} class represents an abstract artificial intelligence (AI) player
@@ -34,6 +37,9 @@ public abstract class AIPlayer extends Player {
      */
     @Override
     public Card play(Card topCard) {
+        PrintUtils.displayTopCard(topCard);
+        PrintUtils.displayHand(name, hand);
+
         List<Card> playableCards = new ArrayList<>();
 
         for (Card c : hand) {
@@ -42,7 +48,7 @@ public abstract class AIPlayer extends Player {
             }
         }
 
-        return getCardToPlay(topCard, playableCards);
+        return playableCards.isEmpty() ? null : getCardToPlay(topCard, playableCards);
     }
 
     /**
@@ -54,4 +60,68 @@ public abstract class AIPlayer extends Player {
      * @return the chosen card to be played by the AI player
      */
     protected abstract Card getCardToPlay(Card topCard, List<Card> playableCards);
+
+    /**
+     * Retrieves the most common color in the AI player's hand.
+     *
+     * @return the most common color
+     */
+    protected Color getMostCommonColor() {
+        final int RED_INDEX = 0, BLUE_INDEX = 1, YELLOW_INDEX = 2, GREEN_INDEX = 3;
+        int[] colorCounts = new int[4];
+        // Go through and count the number of each color of cards in the hand.
+        for (Card c : hand) {
+            switch (c.getColor()) {
+                case RED -> colorCounts[RED_INDEX] += 1;
+                case BLUE -> colorCounts[BLUE_INDEX] += 1;
+                case YELLOW -> colorCounts[YELLOW_INDEX] += 1;
+                case GREEN -> colorCounts[GREEN_INDEX] += 1;
+            }
+        }
+
+        // Find the most common color.
+        int max = colorCounts[0], maxInd = 0;
+        for (int i = 1; i < colorCounts.length; i++) {
+            if (colorCounts[i] > max) {
+                max = colorCounts[i];
+                maxInd = i;
+            }
+        }
+
+        if (max != 0) {
+            switch (maxInd) {
+                case 0 -> {
+                    return Color.RED;
+                }
+                case 1 -> {
+                    return Color.BLUE;
+                }
+                case 2 -> {
+                    return Color.YELLOW;
+                }
+                case 3 -> {
+                    return Color.GREEN;
+                }
+            }
+        }
+
+        // If there are no remaining cards of any color, just randomly choose a color.
+        Random r = new Random();
+        Color color;
+        switch (r.nextInt(4)) {
+            case 0 -> color = Color.BLUE;
+            case 1 -> color = Color.GREEN;
+            case 2 -> color = Color.RED;
+            default -> color = Color.YELLOW;
+        }
+        return color;
+    }
+
+    /**
+     * Sets the {@code declaredUno} flag to {@code true}, indicating that the player has called Uno.
+     * This method is used internally to update the player's Uno status.
+     */
+    protected void callUno() {
+        declaredUno = true;
+    }
 }

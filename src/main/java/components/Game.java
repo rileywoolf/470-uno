@@ -188,7 +188,7 @@ public class Game {
             players.get(playerIndex).addCard(deck.draw());
         }
 
-        if (playerIndex == currentIndex) {
+        if (playerIndex != currentIndex) {
             currentIndex = nextPlayer(currentIndex);
         }
     }
