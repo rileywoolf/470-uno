@@ -64,6 +64,11 @@ public class Game {
     private int currentIndex;
 
     /**
+     * The current player in the list of players.
+     */
+    private Player currentPlayer;
+
+    /**
      * Constructs a new Game with the specified list of players and initializes the game state.
      *
      * @param players the list of players participating in the game
@@ -83,15 +88,71 @@ public class Game {
     }
 
     /**
+     * Gets the deck used in the game.
+     *
+     * @return the deck used in the game
+     */
+    public Deck getDeck() {
+        return deck;
+    }
+
+    /**
+     * Gets the list of players participating in the game.
+     *
+     * @return the list of players participating in the game
+     */
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    /**
+     * Gets the index of the current player in the list of players.
+     *
+     * @return the index of the current player
+     */
+    public int getCurrentIndex() {
+        return currentIndex;
+    }
+
+    /**
      * Starts and manages the game. It handles player turns, card plays, special card effects,
      * and determines the winner of the game.
      */
     public void play() {
         // Game initialization
         Card topCard = deck.draw();
-        Player currentPlayer = players.get(currentIndex);
+        currentPlayer = players.get(currentIndex);
 
         // Check if a special card was chosen as the top card.
+        handleSpecialTopCard(topCard);
+
+        // Main game loop
+        while (true) {
+            currentPlayer = players.get(currentIndex);
+
+            topCard = getCard(topCard);
+            if (topCard == null) continue;
+
+            handleSpecialCards(topCard);
+
+            // Check if the player has won the game, exit game loop.
+            if (currentPlayer.hasNoCards()) {
+                break;
+            }
+
+            // Switch to the next player's turn.
+            currentIndex = nextPlayer(currentIndex);
+        }
+
+        System.out.println("WINNER WINNER CHICKEN DINNER: " + currentPlayer.getName());
+    }
+
+    /**
+     * Handles special actions when the first card is a special card (Reverse, Skip, Draw Two, Wild, Wild Draw Four).
+     *
+     * @param topCard the first card drawn in the game
+     */
+    public void handleSpecialTopCard(Card topCard) {
         do {
             switch (topCard.getType()) {
                 case REVERSE -> forwardPlay = !forwardPlay;
@@ -105,46 +166,6 @@ public class Game {
                 case WILD_DRAW_FOUR -> topCard = chooseNewStartingCard(topCard);
             }
         } while (topCard.getType() == CardType.WILD_DRAW_FOUR);
-
-        // Main game loop
-        while (true) {
-            currentPlayer = players.get(currentIndex);
-
-            Card cardToPlay = currentPlayer.play(topCard);
-
-            // If the player cannot make a move, have them draw a card.
-            if (cardToPlay == null) {
-                currentPlayer.addCard(deck.draw());
-                currentIndex = nextPlayer(currentIndex);
-                continue;
-            } else {
-                topCard = cardToPlay;
-
-                // If the player did not declare Uno and only has one card left, make them draw cards.
-                if (currentPlayer.hasUno() && !currentPlayer.declaredUno()) {
-                    drawCards(UNO_NO_CALL_PENALTY, currentIndex);
-                }
-            }
-
-            // Logic for special cards (reverse, draw two, skip), and wilds.
-            switch(topCard.getType()) {
-                case REVERSE -> forwardPlay = !forwardPlay;
-                case SKIP -> currentIndex = nextPlayer(currentIndex);
-                case DRAW_TWO -> drawCards(2, nextPlayer(currentIndex));
-                case WILD -> topCard.setColor(currentPlayer.chooseColor());
-                case WILD_DRAW_FOUR -> topCard.setColor(wildDrawFour());
-            }
-
-            // Check if the player has won the game, exit game loop.
-            if (currentPlayer.hasNoCards()) {
-                break;
-            }
-
-            // Switch to the next player's turn.
-            currentIndex = nextPlayer(currentIndex);
-        }
-
-        System.out.println("WINNER WINNER CHICKEN DINNER: " + currentPlayer.getName());
     }
 
     /**
@@ -162,12 +183,53 @@ public class Game {
     }
 
     /**
+     * Gets the next card to be played by the current player, handling drawing cards if necessary.
+     *
+     * @param topCard the current top card on the discard pile
+     * @return the next card to be played
+     */
+    public Card getCard(Card topCard) {
+        Card cardToPlay = currentPlayer.play(topCard);
+
+        // If the player cannot make a move, have them draw a card.
+        if (cardToPlay == null) {
+            currentPlayer.addCard(deck.draw());
+            currentIndex = nextPlayer(currentIndex);
+            return null;
+        } else {
+            topCard = cardToPlay;
+
+            // If the player did not declare Uno and only has one card left, make them draw cards.
+            if (currentPlayer.hasUno() && !currentPlayer.declaredUno()) {
+                drawCards(UNO_NO_CALL_PENALTY, currentIndex);
+            }
+        }
+        return topCard;
+    }
+
+    /**
+     * Handles special actions based on the type of the current top card.
+     *
+     * @param topCard the current top card on the discard pile
+     */
+    public void handleSpecialCards(Card topCard) {
+        // Logic for special cards (reverse, draw two, skip), and wilds.
+        switch (topCard.getType()) {
+            case REVERSE -> forwardPlay = !forwardPlay;
+            case SKIP -> currentIndex = nextPlayer(currentIndex);
+            case DRAW_TWO -> drawCards(2, nextPlayer(currentIndex));
+            case WILD -> topCard.setColor(currentPlayer.chooseColor());
+            case WILD_DRAW_FOUR -> topCard.setColor(wildDrawFour());
+        }
+    }
+
+    /**
      * Calculates the index of the next player based on the current player and the direction of play.
      *
      * @param curr the index of the current player
      * @return the index of the next player
      */
-    private int nextPlayer(int curr) {
+    public int nextPlayer(int curr) {
         if (forwardPlay) {
             curr++;
             return curr == players.size() ? 0 : curr;
@@ -180,10 +242,10 @@ public class Game {
     /**
      * Gives the specified user the specified number of cards from the deck and skips their turn.
      *
-     * @param numCards the number of cards to draw
-     * @param playerIndex the index of the player who will draw the cards
+     * @param numCards     the number of cards to draw
+     * @param playerIndex  the index of the player who will draw the cards
      */
-    private void drawCards(int numCards, int playerIndex) {
+    public void drawCards(int numCards, int playerIndex) {
         for (int i = 0; i < numCards; i++) {
             players.get(playerIndex).addCard(deck.draw());
         }
@@ -199,7 +261,7 @@ public class Game {
      *
      * @return the chosen color for the top card
      */
-    private Color wildDrawFour()  {
+    public Color wildDrawFour() {
         drawCards(4, nextPlayer(currentIndex));
         return players.get(currentIndex).chooseColor();
     }

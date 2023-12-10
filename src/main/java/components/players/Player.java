@@ -49,6 +49,13 @@ public abstract class Player {
     public String getName() { return name; }
 
     /**
+     * Gets the hand of the player.
+     *
+     * @return the hand of the player
+     */
+    public List<Card> getHand() { return hand; }
+
+    /**
      * Checks if the player has declared Uno.
      *
      * @return {@code true} if the player has declared Uno, {@code false} otherwise

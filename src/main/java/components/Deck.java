@@ -37,6 +37,16 @@ public class Deck {
     }
 
     /**
+     * Gets the list of cards in the deck.
+     *
+     * @return the list of cards in the deck
+     */
+    public List<Card> getCards() {
+        return cards;
+    }
+
+
+    /**
      * Initializes the deck by adding standard cards, including number cards,
      * special cards (Skip, Reverse, Draw Two), and wild cards (Wild and Wild Draw Four).
      * The deck is created with four sets of each wild card.
