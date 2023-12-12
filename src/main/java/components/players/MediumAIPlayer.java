@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This AI Player class represents a medium-level computer player in a card game.
+ * This AI Player class represents a medium-level computer player.
  * The player selects a playable card based on matching color or number, prioritizing
  * special cards and choosing a color based on the most common color in their hand.
  *
@@ -20,21 +20,22 @@ public class MediumAIPlayer extends AIPlayer {
      * Constructs a new medium-level AI player with the default name "Medium AI".
      *
      * @param print a boolean indicating whether to print game-related information
+     * @param index the index of the player in the player and handSize arrays
      */
-    public MediumAIPlayer(boolean print) {
-        super("Medium AI", print);
+    public MediumAIPlayer(boolean print, int index) {
+        super("Medium AI", index, print);
     }
 
     /**
      * Constructs a new medium-level AI player with the specified name.
      *
      * @param name  the name of the AI player
+     * @param index the index of the player in the player and handSize arrays
      * @param print a boolean indicating whether to print game-related information
      */
-    public MediumAIPlayer(String name, boolean print) {
-        super(name, print);
+    public MediumAIPlayer(String name, int index, boolean print) {
+        super(name, index, print);
     }
-
 
     /**
      * {@inheritDoc}
@@ -94,4 +95,25 @@ public class MediumAIPlayer extends AIPlayer {
         if (print) { System.out.println("Chose color: " + color.name()); }
         return color;
     }
+
+    /**
+     * {@inheritDoc}
+     * Overrides the method to implement medium-level AI logic for choosing another player to switch hands with.
+     *
+     * @param handSizes a list containing the sizes of hands for each player in the game
+     * @return the index of the player to switch hands with
+     */
+    @Override
+    public int getPlayerToSwitchWith(List<Integer> handSizes) {
+        int min = Integer.MAX_VALUE, index = -1;
+        for (int i = 0; i < handSizes.size(); i++) {
+            if (i == playerIndex) continue;
+            if (handSizes.get(i) < min) {
+                min = handSizes.get(i);
+                index = i;
+            }
+        }
+        return index;
+    }
 }
+

@@ -1,7 +1,7 @@
 package utils;
 
 /**
- * The {@code CardType} enum represents the possible types of cards in a card game.
+ * The {@code CardType} enum represents the possible types of cards in a game of Uno.
  * Each card type has a distinct meaning and behavior in the game.
  * <p>
  * The enum includes:
@@ -14,9 +14,6 @@ package utils;
  *     <li>{@code WILD_DRAW_FOUR}: Represents a Wild Draw Four card that allows the player to choose a color
  *         and requires the next player to draw four cards.</li>
  * </ul>
- * </p>
- * <p>
- * Each card type provides a distinct behavior when played in the context of a card game.
  * </p>
  *
  * @author Riley Woolf
@@ -39,18 +36,18 @@ public enum CardType {
     REVERSE,
 
     /**
-     * Represents a Draw Two card that requires the next player to draw two cards.
+     * Represents a Draw Two card that requires the next player to draw two cards and skip their turn.
      */
     DRAW_TWO,
 
     /**
-     * Represents a Wild card.
+     * Represents a Wild card that allows the player to choose a color.
      */
     WILD,
 
     /**
      * Represents a Wild Draw Four card that allows the player to choose a color
-     * and requires the next player to draw four cards.
+     * and requires the next player to draw four cards and skip their turn.
      */
     WILD_DRAW_FOUR
 }

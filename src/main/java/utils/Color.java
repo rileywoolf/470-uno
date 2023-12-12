@@ -1,7 +1,7 @@
 package utils;
 
 /**
- * The {@code Color} enum represents the possible colors of cards in a card game.
+ * The {@code Color} enum represents the possible colors of cards in a game of Uno.
  * Each color has a distinct representation and is used to categorize and identify cards in the game.
  * <p>
  * The enum includes the following colors:

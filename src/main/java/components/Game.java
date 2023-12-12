@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The {@code Game} class represents the main logic of a card game. It manages the game state,
+ * The {@code Game} class represents the main logic of a game of Uno. It manages the game state,
  * player turns, card plays, and determines the winner of the game.
  * <p>
  * The game follows standard Uno rules with additional logic to handle special cards
@@ -34,8 +34,14 @@ import java.util.List;
  * variations in specific Uno game implementations.
  * </p>
  *
+ * <p>
+ * This class provides methods for managing the main game loop, handling special card actions,
+ * and updating the game state accordingly. It also contains methods for accessing information
+ * about the current game state, such as the current player, deck, and direction of play.
+ * </p>
+ *
  * @author Riley Woolf
- * @version 1.0
+ * @version 1.1
  */
 public class Game {
     /**
@@ -49,9 +55,19 @@ public class Game {
     private final Deck deck;
 
     /**
+     * Keeps track of any special rules for the game.
+     */
+    private final SpecialRules specialRules;
+
+    /**
      * The list of players participating in the game.
      */
     private final List<Player> players;
+
+    /**
+     * The list of players participating in the game.
+     */
+    private final List<Integer> handSizes;
 
     /**
      * Flag indicating the direction of play (true for forward, false for backward).
@@ -72,14 +88,24 @@ public class Game {
      * Constructs a new Game with the specified list of players and initializes the game state.
      *
      * @param players the list of players participating in the game
+     * @param specialRules any special rules for the game
      */
-    public Game(List<Player> players) {
+    public Game(List<Player> players, SpecialRules specialRules) {
         this.players = new ArrayList<>(players);
+        this.handSizes = new ArrayList<>();
         this.deck = new Deck();
         this.forwardPlay = true;
         this.currentIndex = 0;
+        this.currentPlayer = players.get(currentIndex);
+        this.specialRules = specialRules;
 
         // Deal the initial cards for the game.
+        for (Player p : this.players) {
+            for (int i = 0; i < 7; i++) {
+                p.addCard(deck.draw());
+            }
+            handSizes.add(7);
+        }
         for (int i = 0; i < 7; i++) {
             for (Player p : this.players) {
                 p.addCard(deck.draw());
@@ -115,25 +141,37 @@ public class Game {
     }
 
     /**
+     * Gets the current direction of play.
+     *
+     * @return true if the play is in forward direction, false otherwise
+     */
+    public boolean isForwardPlay() {
+        return forwardPlay;
+    }
+
+    /**
      * Starts and manages the game. It handles player turns, card plays, special card effects,
      * and determines the winner of the game.
      */
     public void play() {
         // Game initialization
         Card topCard = deck.draw();
-        currentPlayer = players.get(currentIndex);
 
         // Check if a special card was chosen as the top card.
-        handleSpecialTopCard(topCard);
+        topCard = handleSpecialTopCard(topCard);
 
         // Main game loop
         while (true) {
             currentPlayer = players.get(currentIndex);
 
-            topCard = getCard(topCard);
-            if (topCard == null) continue;
+            Card card = getCard(topCard);
+            if (card == null) continue;
 
-            handleSpecialCards(topCard);
+            // Update hand size for the current player.
+            handSizes.set(currentIndex, handSizes.get(currentIndex) - 1);
+
+            topCard = card;
+            topCard = handleSpecialCards(topCard);
 
             // Check if the player has won the game, exit game loop.
             if (currentPlayer.hasNoCards()) {
@@ -149,23 +187,39 @@ public class Game {
 
     /**
      * Handles special actions when the first card is a special card (Reverse, Skip, Draw Two, Wild, Wild Draw Four).
+     * <p>
+     * This method iterates through the special actions associated with the first card drawn in the game.
+     * The loop continues until a non-Wild Draw Four card is encountered, ensuring that the game cannot start
+     * with a Wild Draw Four.
+     * </p>
      *
      * @param topCard the first card drawn in the game
+     * @return the updated top card after handling special actions
      */
-    public void handleSpecialTopCard(Card topCard) {
+    public Card handleSpecialTopCard(Card topCard) {
         do {
             switch (topCard.getType()) {
-                case REVERSE -> forwardPlay = !forwardPlay;
+                case REVERSE -> reversePlay();
                 case SKIP -> currentIndex = nextPlayer(currentIndex);
                 case DRAW_TWO -> {
-                    drawCards(2, currentIndex);
-                    currentIndex = nextPlayer(currentIndex);
+                    drawCards(2, currentIndex, true);
                     currentPlayer = players.get(currentIndex);
                 }
                 case WILD -> topCard.setColor(currentPlayer.chooseColor());
                 case WILD_DRAW_FOUR -> topCard = chooseNewStartingCard(topCard);
+                case NUMBER -> {
+                    if (specialRules.isZerosRotate() && topCard.getNumber() == 0) {
+                        zeroCardRotateHands();
+                    }
+
+                    if (specialRules.isSevensSwitchHands() && topCard.getNumber() == 7) {
+                        sevenCardSwitchHands();
+                    }
+                }
             }
         } while (topCard.getType() == CardType.WILD_DRAW_FOUR);
+
+        return topCard;
     }
 
     /**
@@ -201,7 +255,7 @@ public class Game {
 
             // If the player did not declare Uno and only has one card left, make them draw cards.
             if (currentPlayer.hasUno() && !currentPlayer.declaredUno()) {
-                drawCards(UNO_NO_CALL_PENALTY, currentIndex);
+                drawCards(UNO_NO_CALL_PENALTY, currentIndex, false);
             }
         }
         return topCard;
@@ -209,18 +263,42 @@ public class Game {
 
     /**
      * Handles special actions based on the type of the current top card.
+     * <p>
+     * This method processes special actions associated with a specific card type, such as Reverse, Skip, Draw Two,
+     * Wild, Wild Draw Four, or specific number cards when special rules are enabled.
+     * The special actions are executed based on the type of the current top card, potentially
+     * modifying the game state.
+     * </p>
      *
      * @param topCard the current top card on the discard pile
+     * @return the updated top card after handling special actions
      */
-    public void handleSpecialCards(Card topCard) {
+    public Card handleSpecialCards(Card topCard) {
         // Logic for special cards (reverse, draw two, skip), and wilds.
         switch (topCard.getType()) {
-            case REVERSE -> forwardPlay = !forwardPlay;
+            case REVERSE -> reversePlay();
             case SKIP -> currentIndex = nextPlayer(currentIndex);
-            case DRAW_TWO -> drawCards(2, nextPlayer(currentIndex));
+            case DRAW_TWO -> drawCards(2, nextPlayer(currentIndex), true);
             case WILD -> topCard.setColor(currentPlayer.chooseColor());
             case WILD_DRAW_FOUR -> topCard.setColor(wildDrawFour());
+            case NUMBER -> {
+                if (specialRules.isZerosRotate() && topCard.getNumber() == 0) {
+                    zeroCardRotateHands();
+                }
+
+                if (specialRules.isSevensSwitchHands() && topCard.getNumber() == 7) {
+                    sevenCardSwitchHands();
+                }
+            }
         }
+        return topCard;
+    }
+
+    /**
+     * Reverses the direction of play.
+     */
+    public void reversePlay() {
+        forwardPlay = !forwardPlay;
     }
 
     /**
@@ -240,17 +318,21 @@ public class Game {
     }
 
     /**
-     * Gives the specified user the specified number of cards from the deck and skips their turn.
+     * Gives the specified user the specified number of cards from the deck and optionally skips their turn.
      *
-     * @param numCards     the number of cards to draw
-     * @param playerIndex  the index of the player who will draw the cards
+     * @param numCards       the number of cards to draw
+     * @param playerIndex    the index of the player who will draw the cards
+     * @param goToNextPlayer true if the turn should be skipped, false otherwise
      */
-    public void drawCards(int numCards, int playerIndex) {
+    public void drawCards(int numCards, int playerIndex, boolean goToNextPlayer) {
         for (int i = 0; i < numCards; i++) {
             players.get(playerIndex).addCard(deck.draw());
         }
 
-        if (playerIndex != currentIndex) {
+        // Update the card count for that player.
+        handSizes.set(playerIndex, handSizes.get(playerIndex) + numCards);
+
+        if (goToNextPlayer) {
             currentIndex = nextPlayer(currentIndex);
         }
     }
@@ -262,7 +344,64 @@ public class Game {
      * @return the chosen color for the top card
      */
     public Color wildDrawFour() {
-        drawCards(4, nextPlayer(currentIndex));
+        drawCards(4, nextPlayer(currentIndex), true);
         return players.get(currentIndex).chooseColor();
+    }
+
+    /**
+     * Zero Card Rotation:
+     * <p>
+     * Rotates the hands of all players based on the presence of a zero card.
+     * If there are only two players, their hands are directly swapped. Otherwise,
+     * the hands are rotated either forward or backward based on the current direction of play.
+     * The first and last elements of the list are also swapped to complete the rotation.
+     * </p>
+     */
+    public void zeroCardRotateHands() {
+        if (players.size() == 2) {
+            swapHands(players.get(0), players.get(1));
+            return;
+        }
+
+        if (forwardPlay) {
+            for (int i = 0; i < players.size() - 1; i++) {
+                swapHands(players.get(i), players.get(i + 1));
+            }
+        } else {
+            for (int i = players.size() - 1; i > 0; i--) {
+                swapHands(players.get(i), players.get(i - 1));
+            }
+        }
+
+        // Swap the first and last elements of the list.
+        swapHands(players.get(0), players.get(players.size() - 1));
+    }
+
+    /**
+     * Seven Card Switch Hands:
+     * <p>
+     * Initiates a hand-switching action between the current player and another player,
+     * determined by the current player's strategy (getPlayerToSwitchWith method).
+     * </p>
+     */
+    public void sevenCardSwitchHands() {
+        swapHands(currentPlayer, players.get(currentPlayer.getPlayerToSwitchWith(handSizes)));
+    }
+
+    /**
+     * Swaps the hands of two players.
+     * <p>
+     * This method exchanges the hands of two players, allowing for specific game scenarios
+     * where players need to switch hands. It is used in the implementation of special actions
+     * such as zero card rotation and seven card hand-switching.
+     * </p>
+     *
+     * @param playerOne the first player
+     * @param playerTwo the second player
+     */
+    private void swapHands(Player playerOne, Player playerTwo) {
+        List<Card> temp = new ArrayList<>(playerOne.getHand());
+        playerOne.setHand(playerTwo.getHand());
+        playerTwo.setHand(temp);
     }
 }

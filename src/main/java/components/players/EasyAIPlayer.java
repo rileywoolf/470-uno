@@ -3,55 +3,53 @@ package components.players;
 import components.Card;
 import utils.Color;
 
+import java.util.List;
 import java.util.Random;
 
 /**
- * The {@code DumbComputerPlayer} class represents a simple computer player in a card game.
+ * The {@code EasyAIPlayer} class represents a simple computer player in a card game.
  * This player selects the first valid card in its hand and plays it. Additionally, when required
  * to choose a color (e.g., after playing a Wild card), it randomly selects one of the available colors.
  *
  * <p>
- * The class extends the {@link Player} class and implements a straightforward strategy for playing
- * cards based on the first valid move encountered in its hand. When required to choose a color,
- * the player randomly selects one of the four available colors.
- * </p>
- *
- * <p>
+ * The class extends the {@link Player} class and implements a straightforward strategy.
  * This class is designed for demonstration and testing purposes, providing a basic AI opponent.
  * </p>
  *
  * @author Riley Woolf
  * @version 1.0
  */
-public class DumbComputerPlayer extends Player {
+public class EasyAIPlayer extends Player {
     /**
      * The {@code Random} object used for generating random values.
      */
     private final Random rand = new Random();
 
-
     /**
-     * Constructs a new DumbComputerPlayer with the default name "Simple Computer."
-     */
-    public DumbComputerPlayer() {
-        super("Simple Computer");
-    }
-
-    /**
-     * Constructs a new DumbComputerPlayer with the specified name.
+     * Constructs a new EasyAIPlayer with the default name "Simple Computer."
      *
-     * @param name the name of the DumbComputerPlayer
+     * @param index the index of the player in the player and handSize arrays
      */
-    public DumbComputerPlayer(String name) {
-        super(name);
+    public EasyAIPlayer(int index) {
+        super("Simple Computer", index);
     }
 
     /**
-     * Overrides the play method from the {@link Player} class. This DumbComputerPlayer
+     * Constructs a new EasyAIPlayer with the specified name.
+     *
+     * @param name the name of the EasyAIPlayer
+     * @param index the index of the player in the player and handSize arrays
+     */
+    public EasyAIPlayer(String name, int index) {
+        super(name, index);
+    }
+
+    /**
+     * Overrides the play method from the {@link Player} class. This EasyAIPlayer
      * loops through its hand and plays the first valid card it encounters.
      *
      * @param topCard the current top card on the table
-     * @return the card played by the DumbComputerPlayer, or {@code null} if no valid move is possible
+     * @return the card played by the EasyAIPlayer, or {@code null} if no valid move is possible
      */
     @Override
     public Card play(Card topCard) {
@@ -74,7 +72,7 @@ public class DumbComputerPlayer extends Player {
     }
 
     /**
-     * Overrides the chooseColor method from the {@link Player} class. This DumbComputerPlayer
+     * Overrides the chooseColor method from the {@link Player} class. This EasyAIPlayer
      * randomly chooses a color when required (e.g., after playing a Wild card).
      *
      * @return the randomly chosen color
@@ -89,5 +87,21 @@ public class DumbComputerPlayer extends Player {
             default -> color = Color.YELLOW;
         }
         return color;
+    }
+
+    /**
+     * Overrides the getPlayerToSwitchWith method from the {@link Player} class. This EasyAIPlayer
+     * randomly selects another player to switch hands with.
+     *
+     * @param handSizes a list containing the sizes of hands for each player in the game
+     * @return the index of the player to switch hands with
+     */
+    @Override
+    public int getPlayerToSwitchWith(List<Integer> handSizes) {
+        while (true) {
+            int index = rand.nextInt(handSizes.size());
+
+            if (index != playerIndex) return index;
+        }
     }
 }

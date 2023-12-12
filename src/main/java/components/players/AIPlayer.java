@@ -29,10 +29,11 @@ public abstract class AIPlayer extends Player {
      * Constructs a new AI player with the specified name.
      *
      * @param name the name of the AI player
+     * @param index the index of the player in the player and handSize arrays
      * @param print whether to print the AI options and choices
      */
-    public AIPlayer(String name, boolean print) {
-        super(name);
+    public AIPlayer(String name, int index, boolean print) {
+        super(name, index);
         this.print = print;
     }
 

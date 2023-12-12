@@ -4,7 +4,7 @@ import utils.CardType;
 import utils.Color;
 
 /**
- * The {@code Card} class represents a card in a card game. Each card has a color, a type, and a number
+ * The {@code Card} class represents a card in a card game, like Uno. Each card has a color, a type, and a number
  * (if applicable). The class provides methods to get and set the card's attributes, check if it's a
  * valid move based on the current top card on the discard pile, and convert the card to a string representation.
  *
