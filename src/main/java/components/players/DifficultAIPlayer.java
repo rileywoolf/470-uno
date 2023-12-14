@@ -55,6 +55,8 @@ public class DifficultAIPlayer extends AIPlayer {
             for (Card card : numbers) {
                 if (card.getColor() == color) {
                     printCard(card);
+                    hand.remove(card);
+                    if (hasUno()) callUno();
                     return card;
                 }
             }
@@ -65,6 +67,8 @@ public class DifficultAIPlayer extends AIPlayer {
             for (Card card : specials) {
                 if (card.getColor() == color) {
                     printCard(card);
+                    hand.remove(card);
+                    if (hasUno()) callUno();
                     return card;
                 }
             }
@@ -72,6 +76,8 @@ public class DifficultAIPlayer extends AIPlayer {
 
         // Finally, prioritize playing wilds last.
         printCard(wilds.get(0));
+        hand.remove(wilds.get(0));
+        if (hasUno()) callUno();
         return wilds.get(0);
     }
 
@@ -122,5 +128,17 @@ public class DifficultAIPlayer extends AIPlayer {
         if (print) System.out.println("Chose to switch hands with player " + (targetIndex + 1));
 
         return targetIndex;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Overrides the method to provide the type of the player.
+     * This implementation returns a string representing the player's type, which is "Difficult AI".
+     *
+     * @return a string representing the player's type
+     */
+    @Override
+    public String getPlayerType() {
+        return "Difficult AI";
     }
 }
