@@ -128,7 +128,7 @@ public class HumanPlayer extends Player {
      * @return the index of the player to switch hands with
      */
     @Override
-    public int getPlayerToSwitchWith(List<Integer> handSizes) {
+    public int getPlayerToSwitchWith(List<Integer> handSizes, boolean forwardPlay) {
         System.out.println("Which person do you want to switch hands with?");
 
         do {

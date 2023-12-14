@@ -243,7 +243,7 @@ public class GameTests {
         }
 
         @Override
-        public int getPlayerToSwitchWith(List<Integer> handSizes) {
+        public int getPlayerToSwitchWith(List<Integer> handSizes, boolean forwardPlay) {
             return 0;
         }
     }

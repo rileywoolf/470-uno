@@ -4,9 +4,7 @@ import components.Card;
 import utils.Color;
 import utils.PrintUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * The {@code AIPlayer} class represents an abstract artificial intelligence (AI) player
@@ -74,59 +72,24 @@ public abstract class AIPlayer extends Player {
     protected abstract Card getCardToPlay(Card topCard, List<Card> playableCards);
 
     /**
-     * Retrieves the most common color in the AI player's hand.
+     * Retrieves the order of the colors in the AI player's hand.
      *
-     * @return the most common color
+     * @return the colors in most- to least-common order
      */
-    protected Color getMostCommonColor() {
-        final int RED_INDEX = 0, BLUE_INDEX = 1, YELLOW_INDEX = 2, GREEN_INDEX = 3;
-        int[] colorCounts = new int[4];
-        // Go through and count the number of each color of cards in the hand.
+    protected List<Color> getMostCommonColor() {
+        // Create a map to store the count of each color.
+        Map<Color, Integer> colorToCount = new HashMap<>();
+
+        // Count the number of cards for each color.
         for (Card c : hand) {
-            switch (c.getColor()) {
-                case RED -> colorCounts[RED_INDEX] += 1;
-                case BLUE -> colorCounts[BLUE_INDEX] += 1;
-                case YELLOW -> colorCounts[YELLOW_INDEX] += 1;
-                case GREEN -> colorCounts[GREEN_INDEX] += 1;
-            }
+            colorToCount.put(c.getColor(), colorToCount.getOrDefault(c.getColor(), 0) + 1);
         }
 
-        // Find the most common color.
-        int max = colorCounts[0], maxInd = 0;
-        for (int i = 1; i < colorCounts.length; i++) {
-            if (colorCounts[i] > max) {
-                max = colorCounts[i];
-                maxInd = i;
-            }
-        }
+        // Create a list of colors sorted by count in descending order.
+        List<Color> sortedColors = new ArrayList<>(colorToCount.keySet());
+        sortedColors.sort(Comparator.comparingInt(colorToCount::get).reversed());
 
-        if (max != 0) {
-            switch (maxInd) {
-                case 0 -> {
-                    return Color.RED;
-                }
-                case 1 -> {
-                    return Color.BLUE;
-                }
-                case 2 -> {
-                    return Color.YELLOW;
-                }
-                case 3 -> {
-                    return Color.GREEN;
-                }
-            }
-        }
-
-        // If there are no remaining cards of any color, just randomly choose a color.
-        Random r = new Random();
-        Color color;
-        switch (r.nextInt(4)) {
-            case 0 -> color = Color.BLUE;
-            case 1 -> color = Color.GREEN;
-            case 2 -> color = Color.RED;
-            default -> color = Color.YELLOW;
-        }
-        return color;
+        return sortedColors;
     }
 
     /**
@@ -136,4 +99,22 @@ public abstract class AIPlayer extends Player {
     protected void callUno() {
         declaredUno = true;
     }
+
+    /**
+     * Protected method to print information about a played card during a player's turn.
+     * This method displays the player's name and the details of the played card if printing is enabled.
+     *
+     * <p>
+     * Note: The actual printing of card details is delegated to the {@link PrintUtils#displayCard(Card)} method.
+     * </p>
+     *
+     * @param c the card to be printed
+     */
+    protected void printCard(Card c) {
+        if (print) {
+            System.out.print(name + "' Turn: ");
+            PrintUtils.displayCard(c);
+        }
+    }
+
 }

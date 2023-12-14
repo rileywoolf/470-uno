@@ -62,6 +62,18 @@ public class PrintUtils {
     }
 
     /**
+     * Displays the given card with color formatting in the console.
+     *
+     * @param card the card to display
+     */
+    public static void displayCard(Card card) {
+        displayColor(card);
+        System.out.print("Card played:  " + card);
+        resetColor();
+        System.out.println();
+    }
+
+    /**
      * Resets the console color to the default.
      */
     public static void resetColor() {

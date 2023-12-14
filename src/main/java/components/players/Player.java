@@ -129,9 +129,11 @@ public abstract class Player {
      * The implementation of this method should determine the index of the player in the list of players
      * with whom the current player wishes to exchange hands.
      *
-     * @param handSizes a list containing the sizes of hands for each player in the game
+     * @param handSizes    a list containing the sizes of hands for each player in the game
+     * @param forwardPlay  a boolean indicating the direction of play (true for forward, false for backward)
      * @return the index of the player to switch hands with
      */
-    public abstract int getPlayerToSwitchWith(List<Integer> handSizes);
+    public abstract int getPlayerToSwitchWith(List<Integer> handSizes, boolean forwardPlay);
+
 
 }

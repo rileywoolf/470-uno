@@ -59,6 +59,7 @@ public class MediumAIPlayer extends AIPlayer {
                     if (hasUno()) {
                         callUno();
                     }
+                    printCard(c);
                     return c;
                 }
                 case WILD, WILD_DRAW_FOUR -> wilds.add(c);
@@ -72,6 +73,7 @@ public class MediumAIPlayer extends AIPlayer {
             if (hasUno()) {
                 callUno();
             }
+            printCard(specialCards.get(0));
             return specialCards.get(0);
         }
 
@@ -80,6 +82,7 @@ public class MediumAIPlayer extends AIPlayer {
         if (hasUno()) {
             callUno();
         }
+        printCard(wilds.get(0));
         return wilds.get(0);
     }
 
@@ -91,7 +94,7 @@ public class MediumAIPlayer extends AIPlayer {
      */
     @Override
     public Color chooseColor() {
-        Color color = getMostCommonColor();
+        Color color = getMostCommonColor().get(0);
         if (print) { System.out.println("Chose color: " + color.name()); }
         return color;
     }
@@ -99,21 +102,33 @@ public class MediumAIPlayer extends AIPlayer {
     /**
      * {@inheritDoc}
      * Overrides the method to implement medium-level AI logic for choosing another player to switch hands with.
+     * The implementation of this method selects the player with the smallest hand size, considering the direction of play.
+     * In the forward direction, it looks for the next player with the smallest hand; in the backward direction, it looks for the previous player.
      *
-     * @param handSizes a list containing the sizes of hands for each player in the game
+     * @param handSizes    a list containing the sizes of hands for each player in the game
+     * @param forwardPlay  a boolean indicating the direction of play (true for forward, false for backward)
      * @return the index of the player to switch hands with
      */
     @Override
-    public int getPlayerToSwitchWith(List<Integer> handSizes) {
-        int min = Integer.MAX_VALUE, index = -1;
-        for (int i = 0; i < handSizes.size(); i++) {
-            if (i == playerIndex) continue;
-            if (handSizes.get(i) < min) {
-                min = handSizes.get(i);
-                index = i;
+    public int getPlayerToSwitchWith(List<Integer> handSizes, boolean forwardPlay) {
+        int minHandSize = Integer.MAX_VALUE;
+        int targetIndex = -1;
+        int playerCount = handSizes.size();
+
+        // Iterate in the direction of play.
+        for (int i = 0; i < playerCount; i++) {
+            int indexToCheck = (playerIndex + (forwardPlay ? i : -i) + playerCount) % playerCount;
+
+            if (indexToCheck != playerIndex && handSizes.get(indexToCheck) < minHandSize) {
+                minHandSize = handSizes.get(indexToCheck);
+                targetIndex = indexToCheck;
             }
         }
-        return index;
+
+        if (print) System.out.println("Chose to switch hands with player " + (targetIndex + 1));
+
+        return targetIndex;
     }
+
 }
 

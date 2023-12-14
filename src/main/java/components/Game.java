@@ -385,7 +385,7 @@ public class Game {
      * </p>
      */
     public void sevenCardSwitchHands() {
-        swapHands(currentPlayer, players.get(currentPlayer.getPlayerToSwitchWith(handSizes)));
+        swapHands(currentPlayer, players.get(currentPlayer.getPlayerToSwitchWith(handSizes, forwardPlay)));
     }
 
     /**

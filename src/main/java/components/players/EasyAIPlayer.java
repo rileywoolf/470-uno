@@ -97,7 +97,7 @@ public class EasyAIPlayer extends Player {
      * @return the index of the player to switch hands with
      */
     @Override
-    public int getPlayerToSwitchWith(List<Integer> handSizes) {
+    public int getPlayerToSwitchWith(List<Integer> handSizes, boolean forwardPlay) {
         while (true) {
             int index = rand.nextInt(handSizes.size());
 
