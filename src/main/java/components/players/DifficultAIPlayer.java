@@ -6,17 +6,29 @@ import utils.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The {@code DifficultAIPlayer} class represents a difficult-level computer player in a card game.
+ * The player selects a playable card based on a strategy that prioritizes playing a number card of the highest color,
+ * followed by a special card with the best color, and finally playing a wild card as the last possible move.
+ * The player also implements logic for choosing a color and selecting another player to switch hands with.
+ *
+ * @author [Author Name]
+ * @version 1.0
+ */
 public class DifficultAIPlayer extends AIPlayer {
+
     /**
-     * Constructs a new medium-level AI player with the default name "Difficult AI".
+     * Constructs a new difficult-level AI player with the default name "Difficult AI".
      *
      * @param index the index of the player in the player and handSize arrays
      * @param print whether to print the AI options and choices
      */
-    public DifficultAIPlayer(int index, boolean print) { super("Difficult AI", index, print); }
+    public DifficultAIPlayer(int index, boolean print) {
+        super("Difficult AI", index, print);
+    }
 
     /**
-     * Constructs a new AI player with the specified name.
+     * Constructs a new difficult-level AI player with the specified name.
      *
      * @param name  the name of the AI player
      * @param index the index of the player in the player and handSize arrays
@@ -91,7 +103,9 @@ public class DifficultAIPlayer extends AIPlayer {
     @Override
     public Color chooseColor() {
         Color color = getMostCommonColor().get(0);
-        if (print) { System.out.println("Chose color: " + color.name()); }
+        if (print) {
+            System.out.println("Chose color: " + color.name());
+        }
         return color;
     }
 
@@ -104,8 +118,8 @@ public class DifficultAIPlayer extends AIPlayer {
      * The player chooses the smallest hand that is closest in the specified direction of play.
      * </p>
      *
-     * @param handSizes    a list containing the sizes of hands for each player in the game
-     * @param forwardPlay  a boolean indicating the direction of play (true for forward, false for backward)
+     * @param handSizes   a list containing the sizes of hands for each player in the game
+     * @param forwardPlay a boolean indicating the direction of play (true for forward, false for backward)
      * @return the index of the player to switch hands with
      */
     @Override
