@@ -151,4 +151,16 @@ public class HumanPlayer extends Player {
             }
         } while (true);
     }
+
+    /**
+     * {@inheritDoc}
+     * Overrides the method to provide the type of the player.
+     * This implementation returns a string representing the player's type, which is "Human".
+     *
+     * @return a string representing the player's type
+     */
+    @Override
+    public String getPlayerType() {
+        return "Human";
+    }
 }

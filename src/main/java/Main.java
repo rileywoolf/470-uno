@@ -2,9 +2,7 @@ import components.Game;
 import components.SpecialRules;
 import components.players.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -18,7 +16,7 @@ public class Main {
         List<Player> players = new ArrayList<>();
         for (int i = 0; i < numPlayers; i++) {
             System.out.println("What type of player do you want Player " + (i + 1) + " to be?");
-            System.out.println("Human (h), Easy Computer (e), Medium Computer (m)");
+            System.out.println("Human (h), Easy Computer (e), Medium Computer (m), Difficult Computer (d)");
             String type = scanner.next();
 
             switch (type) {
@@ -28,6 +26,11 @@ public class Main {
                     System.out.print("Do you want to print out the AI's game moves? (true/false) ");
                     boolean printAI = scanner.nextBoolean();
                     players.add(new MediumAIPlayer("Player " + (i + 1), i, printAI));
+                }
+                case "d" -> {
+                    System.out.print("Do you want to print out the AI's game moves? (true/false) ");
+                    boolean printAI = scanner.nextBoolean();
+                    players.add(new DifficultAIPlayer("Player " + (i + 1), i, printAI));
                 }
             }
         }
@@ -53,7 +56,35 @@ public class Main {
             specialRules = new SpecialRules();
         }
 
-        Game game = new Game(players, specialRules);
-        game.play();
+        // Ask the user how many games they want to play with those players, count the number of wins for each player.
+        System.out.println("How many games do you want to play?");
+        int numGames = scanner.nextInt();
+
+        while (numGames < 1) {
+            System.out.println("Invalid number of games, please re-enter.");
+            numGames = scanner.nextInt();
+        }
+
+        if (numGames == 1) {
+            Game game = new Game(players, specialRules);
+            Player winner = game.play();
+            System.out.println("WINNER WINNER CHICKEN DINNER: " + winner.getName());
+        } else {
+            Map<Player, Integer> playerToWins = new HashMap<>();
+            for (int i = 0; i < numGames; i++) {
+                Game game = new Game(players, specialRules);
+                Player winner = game.play();
+
+                playerToWins.put(winner, playerToWins.getOrDefault(winner, 0) + 1);
+            }
+
+            for (Player p : playerToWins.keySet()) {
+                System.out.println("PLAYER: " + p.getName() + " PLAYER TYPE: " + p.getPlayerType() + " WINS: "
+                        + playerToWins.get(p));
+            }
+
+        }
+
+        System.out.println("Thanks for playing! Exiting game...");
     }
 }

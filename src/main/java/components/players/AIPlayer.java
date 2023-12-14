@@ -79,10 +79,15 @@ public abstract class AIPlayer extends Player {
     protected List<Color> getMostCommonColor() {
         // Create a map to store the count of each color.
         Map<Color, Integer> colorToCount = new HashMap<>();
+        colorToCount.put(Color.RED, 0);
+        colorToCount.put(Color.GREEN, 0);
+        colorToCount.put(Color.BLUE, 0);
+        colorToCount.put(Color.YELLOW, 0);
 
         // Count the number of cards for each color.
         for (Card c : hand) {
-            colorToCount.put(c.getColor(), colorToCount.getOrDefault(c.getColor(), 0) + 1);
+            if (c.getColor() == null) continue;
+            colorToCount.put(c.getColor(), colorToCount.get(c.getColor()) + 1);
         }
 
         // Create a list of colors sorted by count in descending order.

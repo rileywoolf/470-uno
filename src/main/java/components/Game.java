@@ -153,7 +153,7 @@ public class Game {
      * Starts and manages the game. It handles player turns, card plays, special card effects,
      * and determines the winner of the game.
      */
-    public void play() {
+    public Player play() {
         // Game initialization
         Card topCard = deck.draw();
 
@@ -182,7 +182,7 @@ public class Game {
             currentIndex = nextPlayer(currentIndex);
         }
 
-        System.out.println("WINNER WINNER CHICKEN DINNER: " + currentPlayer.getName());
+        return currentPlayer;
     }
 
     /**

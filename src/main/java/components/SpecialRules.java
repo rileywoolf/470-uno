@@ -1,5 +1,7 @@
 package components;
 
+// TODO: add in rules to allow for draw until a valid card to play is drawn
+
 /**
  * The {@code SpecialRules} class represents the special rules that can be applied in a game of Uno.
  * These rules customize the gameplay by enabling or disabling specific features.

@@ -135,5 +135,11 @@ public abstract class Player {
      */
     public abstract int getPlayerToSwitchWith(List<Integer> handSizes, boolean forwardPlay);
 
-
+    /**
+     * Abstract method representing the player's strategy to determine its type.
+     * The implementation of this method should return a string representing the player's type.
+     *
+     * @return a string representing the player's type
+     */
+    public abstract String getPlayerType();
 }

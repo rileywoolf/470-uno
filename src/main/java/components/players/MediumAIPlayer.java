@@ -56,9 +56,7 @@ public class MediumAIPlayer extends AIPlayer {
             switch (c.getType()) {
                 case NUMBER -> {
                     hand.remove(c);
-                    if (hasUno()) {
-                        callUno();
-                    }
+                    if (hasUno()) callUno();
                     printCard(c);
                     return c;
                 }
@@ -70,18 +68,14 @@ public class MediumAIPlayer extends AIPlayer {
         // If no number cards are playable, then play the first of the special cards, if any.
         if (!specialCards.isEmpty()) {
             hand.remove(specialCards.get(0));
-            if (hasUno()) {
-                callUno();
-            }
+            if (hasUno()) callUno();
             printCard(specialCards.get(0));
             return specialCards.get(0);
         }
 
         // Just default to whatever is first in the wilds list if nothing else is playable so far.
         hand.remove(wilds.get(0));
-        if (hasUno()) {
-            callUno();
-        }
+        if (hasUno()) callUno();
         printCard(wilds.get(0));
         return wilds.get(0);
     }
@@ -130,5 +124,16 @@ public class MediumAIPlayer extends AIPlayer {
         return targetIndex;
     }
 
+    /**
+     * {@inheritDoc}
+     * Overrides the method to provide the type of the player.
+     * This implementation returns a string representing the player's type, which is "Medium AI".
+     *
+     * @return a string representing the player's type
+     */
+    @Override
+    public String getPlayerType() {
+        return "Medium AI";
+    }
 }
 

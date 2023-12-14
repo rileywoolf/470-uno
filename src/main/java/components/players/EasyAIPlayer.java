@@ -104,4 +104,16 @@ public class EasyAIPlayer extends Player {
             if (index != playerIndex) return index;
         }
     }
+
+    /**
+     * {@inheritDoc}
+     * Overrides the method to provide the type of the player.
+     * This implementation returns a string representing the player's type, which is "Easy AI".
+     *
+     * @return a string representing the player's type
+     */
+    @Override
+    public String getPlayerType() {
+        return "Easy AI";
+    }
 }
